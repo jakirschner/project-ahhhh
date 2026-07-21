@@ -136,10 +136,6 @@ async function fetchValues() {
       }
     });
 
-    if (data['__platform__']) {
-      updatePlatformHeader(data['__platform__']);
-    }
-
     updateOverall(data);
   } catch (e) {
     console.error('Failed to fetch values', e);
@@ -178,19 +174,36 @@ document.querySelectorAll('.ahhh-slider').forEach(slider => {
   });
 });
 
-// --- Platform header ---
+// --- Platform header (fetched client-side to avoid Cloudflare blocking) ---
 
-function updatePlatformHeader({ value, description, updated_at }) {
+const STATUS_TO_VALUE = { none: 0, minor: 30, major: 70, critical: 100 };
+
+function updatePlatformHeader(value, description, fetchedAt) {
   renderPossums('platform-possums', value);
   const valEl = document.getElementById('platform-header-value');
   if (valEl) valEl.textContent = value + '%';
   const descEl = document.getElementById('platform-header-desc');
   if (descEl) descEl.textContent = description || '';
   const updEl = document.getElementById('platform-header-updated');
-  if (updEl) updEl.textContent = updated_at ? 'checked ' + formatUpdated(updated_at) : '';
+  if (updEl) updEl.textContent = fetchedAt ? 'checked ' + formatUpdated(fetchedAt) : '';
+}
+
+async function fetchPlatformStatus() {
+  try {
+    const res = await fetch('https://status.learn.mit.edu/api/v2/status.json');
+    const data = await res.json();
+    const indicator = data.status.indicator;
+    const description = data.status.description;
+    const value = STATUS_TO_VALUE[indicator] ?? 0;
+    updatePlatformHeader(value, description, new Date().toISOString());
+  } catch (e) {
+    console.error('Platform status fetch failed', e);
+  }
 }
 
 // --- Init & poll ---
 
 fetchValues();
+fetchPlatformStatus();
 setInterval(fetchValues, POLL_MS);
+setInterval(fetchPlatformStatus, 60000);
