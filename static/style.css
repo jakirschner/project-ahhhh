@@ -105,6 +105,11 @@ main {
   gap: 1.25rem;
 }
 
+.scales-grid.centered {
+  grid-template-columns: repeat(2, minmax(0, 340px));
+  justify-content: center;
+}
+
 .scale-card {
   background: var(--card-bg);
   border: 2px solid var(--border);

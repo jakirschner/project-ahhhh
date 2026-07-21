@@ -1,4 +1,5 @@
 const SCALE_IDS = ['jace', 'shelly', 'shira', 'meredith', 'kaleb', 'kyle', 'engineering', 'micromasters'];
+const TEAM_IDS = ['jace', 'shelly', 'shira', 'meredith', 'kaleb', 'kyle'];
 const DEBOUNCE_MS = 400;
 const POLL_MS = 3000;
 
@@ -87,7 +88,7 @@ function updateCard(id, value) {
 }
 
 function updateOverall(values) {
-  const vals = Object.values(values).map(v => v.value);
+  const vals = TEAM_IDS.filter(id => values[id] !== undefined).map(id => values[id].value);
   const avg = vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
 
   document.getElementById('overall-bar').style.width = avg + '%';

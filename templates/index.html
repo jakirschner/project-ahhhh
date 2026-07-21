@@ -44,7 +44,7 @@
 
     <section class="scale-section">
       <h2 class="section-title">THE PROJECTS</h2>
-      <div class="scales-grid">
+      <div class="scales-grid centered">
         {% for scale in scales if scale.group == 'project' %}
         <div class="scale-card" id="card-{{ scale.id }}">
           <div class="scale-name">{{ scale.label }}</div>
