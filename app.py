@@ -68,8 +68,6 @@ SCALES = [
     {"id": "meredith", "label": "Meredith", "group": "team"},
     {"id": "kaleb", "label": "Kaleb", "group": "team"},
     {"id": "kyle", "label": "Kyle", "group": "team"},
-    {"id": "engineering", "label": "Engineering", "group": "project"},
-    {"id": "micromasters", "label": "MicroMasters", "group": "project"},
 ]
 SCALE_IDS = {s["id"] for s in SCALES}
 

@@ -55,24 +55,6 @@
       </div>
     </section>
 
-    <section class="scale-section">
-      <h2 class="section-title">OTHER AHHHH CONTRIBUTORS</h2>
-      <div class="scales-grid centered">
-        {% for scale in scales if scale.group == 'project' %}
-        <div class="scale-card" id="card-{{ scale.id }}">
-          <div class="scale-name">{{ scale.label }}</div>
-          <div class="possum-display" id="possums-{{ scale.id }}"></div>
-          <div class="slider-wrap">
-            <input type="range" min="0" max="100" value="0"
-                   class="ahhh-slider" id="slider-{{ scale.id }}"
-                   data-id="{{ scale.id }}">
-          </div>
-          <div class="scale-value" id="value-{{ scale.id }}">0%</div>
-          <div class="scale-updated" id="updated-{{ scale.id }}"></div>
-        </div>
-        {% endfor %}
-      </div>
-    </section>
   </main>
 
   <script src="/static/app.js"></script>
