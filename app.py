@@ -13,7 +13,6 @@ DB_PATH = os.environ.get("DB_PATH", "/data/ahhh.db")
 
 # --- Platform status (read from status.learn.mit.edu) ---
 
-STATUS_TO_VALUE = {"none": 0, "minor": 30, "major": 70, "critical": 100}
 PLATFORM_CACHE_TTL = 60  # seconds
 
 _platform_cache = {"value": 0, "description": "Checking...", "updated_at": None}
@@ -21,15 +20,25 @@ _platform_lock = threading.Lock()
 
 
 def _fetch_platform_status():
+    import xml.etree.ElementTree as ET
     try:
         scraper = cloudscraper.create_scraper()
-        resp = scraper.get(
-            "https://status.learn.mit.edu/api/v2/status.json", timeout=10
-        )
-        data = resp.json()
-        indicator = data["status"]["indicator"]
-        description = data["status"]["description"]
-        value = STATUS_TO_VALUE.get(indicator, 0)
+        resp = scraper.get("https://status.learn.mit.edu/history.atom", timeout=10)
+        root = ET.fromstring(resp.content)
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        entries = root.findall("atom:entry", ns)
+
+        if not entries:
+            value, description = 0, "All Systems Operational"
+        else:
+            latest = entries[-1]
+            content = latest.findtext("atom:content", "", ns)
+            title = latest.findtext("atom:title", "", ns)
+            if content.strip().startswith("[Resolved]"):
+                value, description = 0, "All Systems Operational"
+            else:
+                value, description = 70, title or "Incident in Progress"
+
         with _platform_lock:
             _platform_cache.update(
                 value=value,
