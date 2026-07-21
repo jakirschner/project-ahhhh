@@ -1,5 +1,7 @@
 import os
 import sqlite3
+import threading
+import requests as http_requests
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from datetime import datetime, timezone
@@ -8,6 +10,46 @@ app = Flask(__name__)
 CORS(app)
 
 DB_PATH = os.environ.get("DB_PATH", "/data/ahhh.db")
+
+# --- Platform status (read from status.learn.mit.edu) ---
+
+STATUS_TO_VALUE = {"none": 0, "minor": 30, "major": 70, "critical": 100}
+PLATFORM_CACHE_TTL = 60  # seconds
+
+_platform_cache = {"value": 0, "description": "Checking...", "updated_at": None}
+_platform_lock = threading.Lock()
+
+
+def _fetch_platform_status():
+    try:
+        resp = http_requests.get(
+            "https://status.learn.mit.edu/api/v2/status.json", timeout=10
+        )
+        data = resp.json()
+        indicator = data["status"]["indicator"]
+        description = data["status"]["description"]
+        value = STATUS_TO_VALUE.get(indicator, 0)
+        with _platform_lock:
+            _platform_cache.update(
+                value=value,
+                description=description,
+                updated_at=datetime.now(timezone.utc).isoformat(),
+            )
+    except Exception as e:
+        print(f"Platform status fetch failed: {e}")
+
+
+def get_platform_status():
+    with _platform_lock:
+        updated_at = _platform_cache.get("updated_at")
+    stale = updated_at is None or (
+        datetime.now(timezone.utc)
+        - datetime.fromisoformat(updated_at)
+    ).total_seconds() > PLATFORM_CACHE_TTL
+    if stale:
+        _fetch_platform_status()
+    with _platform_lock:
+        return dict(_platform_cache)
 
 SCALES = [
     {"id": "jace", "label": "Jace", "group": "team"},
@@ -69,6 +111,11 @@ def set_value():
             (scale_id, value, now),
         )
     return jsonify({"ok": True, "id": scale_id, "value": value, "updated_at": now})
+
+
+@app.route("/api/platform-status")
+def platform_status_route():
+    return jsonify(get_platform_status())
 
 
 init_db()

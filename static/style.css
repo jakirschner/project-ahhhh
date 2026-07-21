@@ -264,6 +264,29 @@ main {
 .ahhh-high   { border-color: var(--orange); box-shadow: 0 0 16px rgba(244,162,97,0.5); }
 .ahhh-panic  { border-color: var(--red); box-shadow: 0 0 20px rgba(230,57,70,0.5); }
 
+/* platform card */
+.platform-card {
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.platform-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 2px dotted currentColor;
+  padding-bottom: 1px;
+}
+
+.platform-link:hover { opacity: 0.75; }
+
+.platform-description {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  color: #555;
+  min-height: 1.2em;
+}
+
 /* full chaos body state */
 body.full-chaos {
   animation: body-flash 0.5s infinite;

@@ -76,14 +76,16 @@ function updateCard(id, value) {
   const slider = document.getElementById('slider-' + id);
   const valueEl = document.getElementById('value-' + id);
   const card = document.getElementById('card-' + id);
-  if (!slider || !valueEl || !card) return;
+  if (!valueEl || !card) return;
 
-  slider.value = value;
-  slider.style.setProperty('--pct', value + '%');
+  if (slider) {
+    slider.value = value;
+    slider.style.setProperty('--pct', value + '%');
+  }
   valueEl.textContent = value + '%';
   valueEl.style.color = value >= 75 ? '#e63946' : value >= 50 ? '#f4a261' : value >= 25 ? '#c8a000' : '#1a1a1a';
 
-  card.className = 'scale-card ' + cardClass(value);
+  card.className = 'scale-card ' + (id === 'platform' ? 'platform-card ' : '') + cardClass(value);
   renderPossums('possums-' + id, value);
 }
 
@@ -173,7 +175,27 @@ document.querySelectorAll('.ahhh-slider').forEach(slider => {
   });
 });
 
+// --- Platform status ---
+
+async function fetchPlatformStatus() {
+  try {
+    const res = await fetch('/api/platform-status');
+    const data = await res.json();
+    const { value, description, updated_at } = data;
+
+    updateCard('platform', value);
+    const descEl = document.getElementById('desc-platform');
+    if (descEl) descEl.textContent = description || '';
+    const updatedEl = document.getElementById('updated-platform');
+    if (updatedEl) updatedEl.textContent = 'checked ' + formatUpdated(updated_at);
+  } catch (e) {
+    console.error('Failed to fetch platform status', e);
+  }
+}
+
 // --- Init & poll ---
 
 fetchValues();
+fetchPlatformStatus();
 setInterval(fetchValues, POLL_MS);
+setInterval(fetchPlatformStatus, 60000);
