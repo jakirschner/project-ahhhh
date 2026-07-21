@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROJECT AHHHH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <header>
+    <h1 id="main-title">PROJECT AHHHH</h1>
+    <div id="overall-meter">
+      <div class="overall-label">OVERALL AHHH LEVEL</div>
+      <div class="overall-bar-wrap">
+        <div id="overall-bar" class="overall-bar"></div>
+      </div>
+      <div id="overall-value" class="overall-value">0%</div>
+      <div id="header-possums" class="header-possums"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="scale-section">
+      <h2 class="section-title">THE TEAM</h2>
+      <div class="scales-grid">
+        {% for scale in scales if scale.group == 'team' %}
+        <div class="scale-card" id="card-{{ scale.id }}">
+          <div class="scale-name">{{ scale.label }}</div>
+          <div class="possum-display" id="possums-{{ scale.id }}"></div>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="100" value="0"
+                   class="ahhh-slider" id="slider-{{ scale.id }}"
+                   data-id="{{ scale.id }}">
+          </div>
+          <div class="scale-value" id="value-{{ scale.id }}">0%</div>
+          <div class="scale-updated" id="updated-{{ scale.id }}"></div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="scale-section">
+      <h2 class="section-title">THE PROJECTS</h2>
+      <div class="scales-grid">
+        {% for scale in scales if scale.group == 'project' %}
+        <div class="scale-card" id="card-{{ scale.id }}">
+          <div class="scale-name">{{ scale.label }}</div>
+          <div class="possum-display" id="possums-{{ scale.id }}"></div>
+          <div class="slider-wrap">
+            <input type="range" min="0" max="100" value="0"
+                   class="ahhh-slider" id="slider-{{ scale.id }}"
+                   data-id="{{ scale.id }}">
+          </div>
+          <div class="scale-value" id="value-{{ scale.id }}">0%</div>
+          <div class="scale-updated" id="updated-{{ scale.id }}"></div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
