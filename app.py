@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import threading
-import requests as http_requests
+import cloudscraper
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from datetime import datetime, timezone
@@ -22,7 +22,8 @@ _platform_lock = threading.Lock()
 
 def _fetch_platform_status():
     try:
-        resp = http_requests.get(
+        scraper = cloudscraper.create_scraper()
+        resp = scraper.get(
             "https://status.learn.mit.edu/api/v2/status.json", timeout=10
         )
         data = resp.json()
@@ -93,7 +94,9 @@ def index():
 def get_values():
     with get_db() as conn:
         rows = conn.execute("SELECT id, value, updated_at FROM scales").fetchall()
-        return jsonify({row["id"]: {"value": row["value"], "updated_at": row["updated_at"]} for row in rows})
+        data = {row["id"]: {"value": row["value"], "updated_at": row["updated_at"]} for row in rows}
+    data["__platform__"] = get_platform_status()
+    return jsonify(data)
 
 
 @app.route("/api/values", methods=["POST"])
