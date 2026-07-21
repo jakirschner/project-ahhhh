@@ -128,7 +128,6 @@ async function fetchValues() {
     SCALE_IDS.forEach(id => {
       if (data[id] !== undefined) {
         const activeSlider = document.getElementById('slider-' + id);
-        // Don't overwrite a slider the user is currently dragging
         if (activeSlider !== document.activeElement && !debounceTimers[id]) {
           updateCard(id, data[id].value);
         }
@@ -136,6 +135,10 @@ async function fetchValues() {
         if (updatedEl) updatedEl.textContent = formatUpdated(data[id].updated_at);
       }
     });
+
+    if (data['__platform__']) {
+      updatePlatformHeader(data['__platform__']);
+    }
 
     updateOverall(data);
   } catch (e) {
@@ -175,27 +178,19 @@ document.querySelectorAll('.ahhh-slider').forEach(slider => {
   });
 });
 
-// --- Platform status ---
+// --- Platform header ---
 
-async function fetchPlatformStatus() {
-  try {
-    const res = await fetch('/api/platform-status');
-    const data = await res.json();
-    const { value, description, updated_at } = data;
-
-    updateCard('platform', value);
-    const descEl = document.getElementById('desc-platform');
-    if (descEl) descEl.textContent = description || '';
-    const updatedEl = document.getElementById('updated-platform');
-    if (updatedEl) updatedEl.textContent = 'checked ' + formatUpdated(updated_at);
-  } catch (e) {
-    console.error('Failed to fetch platform status', e);
-  }
+function updatePlatformHeader({ value, description, updated_at }) {
+  renderPossums('platform-possums', value);
+  const valEl = document.getElementById('platform-header-value');
+  if (valEl) valEl.textContent = value + '%';
+  const descEl = document.getElementById('platform-header-desc');
+  if (descEl) descEl.textContent = description || '';
+  const updEl = document.getElementById('platform-header-updated');
+  if (updEl) updEl.textContent = updated_at ? 'checked ' + formatUpdated(updated_at) : '';
 }
 
 // --- Init & poll ---
 
 fetchValues();
-fetchPlatformStatus();
 setInterval(fetchValues, POLL_MS);
-setInterval(fetchPlatformStatus, 60000);

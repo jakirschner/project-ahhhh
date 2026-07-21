@@ -13,13 +13,25 @@
 
   <header>
     <h1 id="main-title">PROJECT AHHHH</h1>
-    <div id="overall-meter">
-      <div class="overall-label">OVERALL AHHH LEVEL</div>
-      <div class="overall-bar-wrap">
-        <div id="overall-bar" class="overall-bar"></div>
+    <div id="header-meters">
+      <div id="overall-meter">
+        <div class="overall-label">OVERALL AHHH LEVEL</div>
+        <div class="overall-bar-wrap">
+          <div id="overall-bar" class="overall-bar"></div>
+        </div>
+        <div id="overall-value" class="overall-value">0%</div>
+        <div id="header-possums" class="header-possums"></div>
       </div>
-      <div id="overall-value" class="overall-value">0%</div>
-      <div id="header-possums" class="header-possums"></div>
+      <div class="header-divider"></div>
+      <div id="platform-meter">
+        <div class="overall-label">
+          <a href="https://status.learn.mit.edu/" target="_blank" rel="noopener" class="platform-header-link">THE PLATFORM ↗</a>
+        </div>
+        <div id="platform-possums" class="header-possums"></div>
+        <div id="platform-header-value" class="overall-value">—</div>
+        <div id="platform-header-desc" class="platform-header-desc">Checking...</div>
+        <div id="platform-header-updated" class="platform-header-updated"></div>
+      </div>
     </div>
   </header>
 
@@ -59,20 +71,6 @@
           <div class="scale-updated" id="updated-{{ scale.id }}"></div>
         </div>
         {% endfor %}
-      </div>
-    </section>
-    <section class="scale-section">
-      <h2 class="section-title">THE PLATFORM</h2>
-      <div class="scales-grid centered">
-        <div class="scale-card platform-card" id="card-platform">
-          <a class="scale-name platform-link" href="https://status.learn.mit.edu/" target="_blank" rel="noopener">
-            The Platform ↗
-          </a>
-          <div class="possum-display" id="possums-platform"></div>
-          <div class="scale-value" id="value-platform">—</div>
-          <div class="platform-description" id="desc-platform">Checking status...</div>
-          <div class="scale-updated" id="updated-platform"></div>
-        </div>
       </div>
     </section>
   </main>

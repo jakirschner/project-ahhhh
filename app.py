@@ -93,7 +93,10 @@ def index():
 def get_values():
     with get_db() as conn:
         rows = conn.execute("SELECT id, value, updated_at FROM scales").fetchall()
-        return jsonify({row["id"]: {"value": row["value"], "updated_at": row["updated_at"]} for row in rows})
+        data = {row["id"]: {"value": row["value"], "updated_at": row["updated_at"]} for row in rows}
+    platform = get_platform_status()
+    data["__platform__"] = platform
+    return jsonify(data)
 
 
 @app.route("/api/values", methods=["POST"])
