@@ -101,7 +101,7 @@ function updateOverall(values) {
 
   const title = document.getElementById('main-title');
   const extras = Math.floor(avg / 20);
-  title.textContent = 'PROJECT ' + 'AHHH' + 'H'.repeat(extras);
+  title.textContent = 'AHHH' + 'H'.repeat(extras);
 }
 
 function formatUpdated(isoString) {
